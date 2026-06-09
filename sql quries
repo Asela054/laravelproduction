@@ -1,0 +1,57 @@
+
+
+
+-- 1. Create parent table
+CREATE TABLE `tbl_supplier_porder` (
+    `idtbl_supplier_porder`       INT(11)         NOT NULL AUTO_INCREMENT,
+    `orderdate`                   DATE            NULL,
+    `total`                       DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `vat`                         DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `nettotal`                    DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `vatpre`                      DECIMAL(10,2)   NOT NULL DEFAULT 0,
+    `remark`                      TEXT            NULL,
+    `confirmstatus`               INT(11)         NOT NULL DEFAULT 0,
+    `status`                      INT(11)         NOT NULL DEFAULT 1,
+    `insertdatetime`              DATETIME        NULL,
+    `completestatus`              INT(11)         NOT NULL DEFAULT 0,
+    `grnissuestatus`              INT(11)         NOT NULL DEFAULT 0,
+    `tbl_user_idtbl_user`         INT(11)         NOT NULL,
+    `tbl_supplier_idtbl_supplier` INT(11)         NOT NULL,
+    PRIMARY KEY (`idtbl_supplier_porder`),
+    INDEX `fk_spo_user_idx`       (`tbl_user_idtbl_user`),
+    INDEX `fk_spo_supplier_idx`   (`tbl_supplier_idtbl_supplier`),
+    CONSTRAINT `fk_spo_user`
+        FOREIGN KEY (`tbl_user_idtbl_user`)
+        REFERENCES `tbl_user` (`idtbl_user`),
+    CONSTRAINT `fk_spo_supplier`
+        FOREIGN KEY (`tbl_supplier_idtbl_supplier`)
+        REFERENCES `tbl_supplier` (`idtbl_supplier`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- 2. Create detail table
+CREATE TABLE `tbl_supplier_porder_detail` (
+    `idtbl_supplier_porder_detail`              INT(11)         NOT NULL AUTO_INCREMENT,
+    `qty`                                       DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `unitprice`                                 DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `total`                                     DECIMAL(15,2)   NOT NULL DEFAULT 0,
+    `status`                                    INT(11)         NOT NULL DEFAULT 1,
+    `insertdatetime`                            DATETIME        NULL,
+    `updatedatetime`                            DATETIME        NULL,
+    `tbl_user_idtbl_user`                       INT(11)         NOT NULL,
+    `tbl_material_info_idtbl_material_info`     INT(11)         NOT NULL,
+    `tbl_supplier_porder_idtbl_supplier_porder` INT(11)         NOT NULL,
+    PRIMARY KEY (`idtbl_supplier_porder_detail`),
+    INDEX `fk_spod_user_idx`     (`tbl_user_idtbl_user`),
+    INDEX `fk_spod_material_idx` (`tbl_material_info_idtbl_material_info`),
+    INDEX `fk_spod_spo_idx`      (`tbl_supplier_porder_idtbl_supplier_porder`),
+    CONSTRAINT `fk_spod_user`
+        FOREIGN KEY (`tbl_user_idtbl_user`)
+        REFERENCES `tbl_user` (`idtbl_user`),
+    CONSTRAINT `fk_spod_material`
+        FOREIGN KEY (`tbl_material_info_idtbl_material_info`)
+        REFERENCES `tbl_material_info` (`idtbl_material_info`),
+    CONSTRAINT `fk_spod_spo`
+        FOREIGN KEY (`tbl_supplier_porder_idtbl_supplier_porder`)
+        REFERENCES `tbl_supplier_porder` (`idtbl_supplier_porder`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

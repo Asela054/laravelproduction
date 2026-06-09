@@ -111,6 +111,17 @@
 					</div>
 				@endif
 
+
+				@if(canAccessMenu(11))
+				<div class="menu-item">
+					<a class="menu-link{{ request()->routeIs('Supplierpurchaseorders.*') ? ' active' : '' }}" href="{{ route('supplierpurchaseorders.index') }}"><span class="menu-icon"><i class="ki-duotone ki-truck fs-2"><span
+									class="path1"></span><span class="path2"></span></i></span><span
+							class="menu-title">Supplier Purchsing Order</span></a>
+				</div>
+				@endif
+
+
+
 						@if(canAccessMenu(7))
 						<div class="menu-item">
 							<a class="menu-link{{ request()->is('finishgoodbom*') ? ' active' : '' }}"
