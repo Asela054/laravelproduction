@@ -28,6 +28,10 @@
             <td style="width:40%; vertical-align:top;">
                 <table class="tbl-none" style="width:100%;">
                     <tr>
+                        <td class="sm">Order No</td>
+                        <td class="sm">: {{ $order->order_number ?? '-' }}</td>
+                    </tr>
+                    <tr>
                         <td class="sm">Order Date</td>
                         <td class="sm">: {{ $order->orderdate }}</td>
                     </tr>

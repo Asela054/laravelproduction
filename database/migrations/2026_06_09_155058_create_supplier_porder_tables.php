@@ -11,6 +11,7 @@ return new class extends Migration
         // ── tbl_supplier_porder ───────────────────────────────────────────────
         Schema::create('tbl_supplier_porder', function (Blueprint $table) {
             $table->increments('idtbl_supplier_porder');
+            $table->string('order_number', 20)->unique();
             $table->date('orderdate')->nullable();
             $table->decimal('total',    15, 2)->default(0);
             $table->decimal('vat',      15, 2)->default(0);

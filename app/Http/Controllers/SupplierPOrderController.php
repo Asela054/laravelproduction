@@ -266,6 +266,7 @@ class SupplierPOrderController extends Controller
 
         return response()->json([
             'id'         => $spo->idtbl_supplier_porder,
+            'order_number' => $spo->order_number, 
             'orderdate'  => $spo->orderdate
                 ? Carbon::parse($spo->orderdate)->toDateString()
                 : null,

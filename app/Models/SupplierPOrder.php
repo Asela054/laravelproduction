@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -16,6 +17,7 @@ class SupplierPOrder extends Model
     public    $timestamps = false;
 
     protected $fillable = [
+        'order_number',
         'orderdate',
         'total',
         'vat',
@@ -30,6 +32,35 @@ class SupplierPOrder extends Model
         'completestatus',
         'grnissuestatus',
     ];
+
+    // ── Auto-generate order number on creating ──────────────────────────
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (empty($model->order_number)) {
+                $model->order_number = static::generateOrderNumber();
+            }
+        });
+    }
+
+    public static function generateOrderNumber(): string
+    {
+        $prefix  = 'SPO-' . now()->format('Ym') . '-';   // e.g. SPO-202606-
+
+        // Lock the row so concurrent requests don't generate duplicates
+        $last = DB::table('tbl_supplier_porder')
+            ->where('order_number', 'like', $prefix . '%')
+            ->orderByDesc('order_number')
+            ->lockForUpdate()
+            ->value('order_number');
+
+        $next = $last
+            ? (int) substr($last, strrpos($last, '-') + 1) + 1
+            : 1;
+
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
+    // ────────────────────────────────────────────────────────────────────
 
     public function users()
     {
@@ -52,6 +83,7 @@ class SupplierPOrder extends Model
             ->useLogName('supplier_purchase_order')
             ->logOnly([
                 'idtbl_supplier_porder',
+                'order_number',
                 'orderdate',
                 'total',
                 'vat',

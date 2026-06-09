@@ -42,6 +42,7 @@
                         <table class="table align-middle table-row-dashed fs-6 gy-5" id="spoTable">
                             <thead>
                                 <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                                    <th>Order No</th>
                                     <th>Date</th>
                                     <th>Request By</th>
                                     <th>Supplier</th>
@@ -66,7 +67,6 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title fs-2 fw-bold" id="spo_modal_title">Create Supplier PO</h2>
-                        {{-- FIX 1: Added path1/path2 spans so the ki-duotone icon renders correctly --}}
                         <button type="button" class="btn btn-lg btn-icon btn-active-light-primary"
                             data-bs-dismiss="modal" aria-label="Close">
                             <i class="ki-duotone ki-cross fs-1">
@@ -173,12 +173,22 @@
                     <div class="modal-body py-6 px-6">
                         <div class="row mb-4">
                             <div class="col-md-6">
+                                <div class="fw-bold">Order No:</div>
+                                <div id="spo_view_orderno" class="text-gray-700">-</div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="fw-bold">Order Date:</div>
                                 <div id="spo_view_orderdate" class="text-gray-700">-</div>
                             </div>
+                        </div>
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="fw-bold">Supplier:</div>
                                 <div id="spo_view_supplier" class="text-gray-700">-</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold">Net Total:</div>
+                                <div id="spo_view_nettotal" class="text-gray-700">-</div>
                             </div>
                         </div>
                         <div class="row mb-4">
@@ -187,13 +197,9 @@
                                 <div id="spo_view_total" class="text-gray-700">-</div>
                             </div>
                             <div class="col-md-6">
-                                <div class="fw-bold">Net Total:</div>
-                                <div id="spo_view_nettotal" class="text-gray-700">-</div>
+                                <div class="fw-bold">Remark:</div>
+                                <div id="spo_view_remark" class="text-gray-700">-</div>
                             </div>
-                        </div>
-                        <div class="mb-4">
-                            <div class="fw-bold">Remark:</div>
-                            <div id="spo_view_remark" class="text-gray-700">-</div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle fs-7">
@@ -474,9 +480,7 @@ $(document).ready(function () {
     };
 
     /* ────────────────────────────────────────────────────────────────────
-       FIX 2 & 3: Load suppliers & materials ONCE at page ready.
-       Select2 is also initialised here so it is ready before any modal opens,
-       avoiding the Bootstrap backdrop timing error.
+       Load suppliers & materials ONCE at page ready.
     ──────────────────────────────────────────────────────────────────── */
     $.when(loadSuppliers(), loadMaterials()).done(function () {
         initSelect2();
@@ -487,10 +491,7 @@ $(document).ready(function () {
     ──────────────────────────────────────────────────────────────────── */
     $('[data-bs-target="#kt_modal_spo_add"]').on('click', setCreateMode);
 
-    // FIX 2: Use 'show.bs.modal' (fires before animation) instead of
-    // 'shown.bs.modal' to avoid the backdrop timing conflict.
     $('#kt_modal_spo_add').on('show.bs.modal', function () {
-        // Set today's date only when opening in create mode and field is empty
         if ($('#spo_mode').val() === 'create' && !$('#spo_orderdate').val()) {
             $('#spo_orderdate').val(new Date().toISOString().split('T')[0]);
         }
@@ -580,6 +581,9 @@ $(document).ready(function () {
        View PO
     ──────────────────────────────────────────────────────────────────── */
     const renderView = (data) => {
+         $('#spo_view_orderno').html(data.order_number 
+            ? `<div class="badge badge-light-primary">${data.order_number}</div>` 
+            : '-');
         $('#spo_view_orderdate').text(data.orderdate ?? '-');
         $('#spo_view_supplier').text(data.supplier ?? '-');
         $('#spo_view_total').text(fmtCur(data.total ?? 0));
@@ -613,8 +617,6 @@ $(document).ready(function () {
 
     /* ────────────────────────────────────────────────────────────────────
        Edit PO
-       FIX 4: Removed redundant loadSuppliers() + loadMaterials() calls here.
-       Data is already loaded at page ready — only fetch the order record.
     ──────────────────────────────────────────────────────────────────── */
     $(document).on('click', '.spo-btn-edit', function (e) {
         e.preventDefault();
@@ -678,10 +680,14 @@ $(document).ready(function () {
         order: [[0, 'desc']],
         ajax: "{{ route('supplierpurchaseorders.data') }}",
         columns: [
-            { data: 'orderdate',              name: 'orderdate' },
-            { data: 'users.name',             name: 'users.name' },
-            { data: 'suppliers.suppliername', name: 'suppliers.suppliername' },
-            { data: 'nettotal',               name: 'nettotal',
+            { 
+                data: 'order_number', name: 'order_number',
+                render: (d) => `<div class="badge badge-light-primary">${d}</div>` 
+            },
+            { data: 'orderdate',                  name: 'orderdate' },
+            { data: 'users.name',                 name: 'users.name' },
+            { data: 'suppliers.suppliername',     name: 'suppliers.suppliername' },
+            { data: 'nettotal',                   name: 'nettotal',
               render: $.fn.dataTable.render.number(',', '.', 2) },
             {
                 data: 'confirmstatus', name: 'confirmstatus',
