@@ -57,3 +57,73 @@ CREATE TABLE `tbl_supplier_porder_detail` (
         FOREIGN KEY (`tbl_supplier_porder_idtbl_supplier_porder`)
         REFERENCES `tbl_supplier_porder` (`idtbl_supplier_porder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+-- ── Material GRN Header ──────────────────────────────────────────────────
+CREATE TABLE `tbl_material_grn` (
+    `idtbl_material_grn`                          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `grn_number`                                  VARCHAR(30)  NOT NULL,
+    `date`                                        DATE         NOT NULL,
+    `invoicenum`                                  VARCHAR(255) NOT NULL,
+    `dispatchnum`                                 VARCHAR(255) NOT NULL,
+    `batchno`                                     VARCHAR(100) NULL,
+    `total`                                       DOUBLE       NOT NULL,
+    `vatamount`                                   DOUBLE       NOT NULL DEFAULT 0,
+    `nettotal`                                    DOUBLE       NOT NULL,
+    `status`                                      INT          NOT NULL DEFAULT 1,
+    `confirm_status`                              TINYINT      NOT NULL DEFAULT 0,
+    `insertdatetime`                              DATETIME     NOT NULL,
+    `updatedatetime`                              DATETIME     NULL,
+    `tbl_user_idtbl_user`                         INT          NOT NULL, 
+    `tbl_supplier_porder_idtbl_supplier_porder`   INT          NOT NULL,  
+    `tbl_location_idtbl_location`                 INT          NOT NULL, 
+
+    PRIMARY KEY (`idtbl_material_grn`),
+    UNIQUE KEY `tbl_material_grn_grn_number_unique` (`grn_number`),
+
+    CONSTRAINT `fk_mgrn_user`
+        FOREIGN KEY (`tbl_user_idtbl_user`)
+        REFERENCES `tbl_user` (`idtbl_user`),
+
+    CONSTRAINT `fk_mgrn_spo`
+        FOREIGN KEY (`tbl_supplier_porder_idtbl_supplier_porder`)
+        REFERENCES `tbl_supplier_porder` (`idtbl_supplier_porder`),
+
+    CONSTRAINT `fk_mgrn_location`
+        FOREIGN KEY (`tbl_location_idtbl_location`)
+        REFERENCES `tbl_locations` (`idtbl_locations`)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+-- ── Material GRN Detail Lines ────────────────────────────────────────────
+CREATE TABLE `tbl_material_grn_detail` (
+    `idtbl_material_grn_detail`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `qty`                                   DOUBLE       NOT NULL,
+    `unitprice`                             DOUBLE       NOT NULL,
+    `total`                                 DOUBLE       NOT NULL,
+    `status`                                INT          NOT NULL DEFAULT 1,
+    `insertdatetime`                        DATETIME     NOT NULL,
+    `updatedatetime`                        DATETIME     NULL,
+    `tbl_user_idtbl_user`                   INT          NOT NULL,
+    `tbl_material_grn_idtbl_material_grn`   INT UNSIGNED NOT NULL,  
+    `tbl_material_info_idtbl_material_info` INT          NOT NULL,
+
+    PRIMARY KEY (`idtbl_material_grn_detail`),
+
+    CONSTRAINT `fk_mgrndetail_user`
+        FOREIGN KEY (`tbl_user_idtbl_user`)
+        REFERENCES `tbl_user` (`idtbl_user`),
+
+    CONSTRAINT `fk_mgrndetail_grn`
+        FOREIGN KEY (`tbl_material_grn_idtbl_material_grn`)
+        REFERENCES `tbl_material_grn` (`idtbl_material_grn`)
+        ON DELETE CASCADE,
+
+    CONSTRAINT `fk_mgrndetail_material`
+        FOREIGN KEY (`tbl_material_info_idtbl_material_info`)
+        REFERENCES `tbl_material_info` (`idtbl_material_info`)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
