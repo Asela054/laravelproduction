@@ -54,9 +54,10 @@ class MaterialGrn extends Model
             ->lockForUpdate()
             ->value('grn_number');
 
-        $next = $last
-            ? (int) filter_var($last, FILTER_SANITIZE_NUMBER_INT) + 1
-            : 1;
+        $next = 1;
+        if ($last && preg_match('/(\d+)$/', $last, $m)) {
+            $next = (int) $m[1] + 1;
+        }
 
         return 'MGRN-' . $next;
     }

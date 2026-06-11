@@ -1,6 +1,3 @@
-
-
-
 -- 1. Create parent table
 CREATE TABLE `tbl_supplier_porder` (
     `idtbl_supplier_porder`       INT(11)         NOT NULL AUTO_INCREMENT,
@@ -60,7 +57,7 @@ CREATE TABLE `tbl_supplier_porder_detail` (
 
 
 
--- ── Material GRN Header ──────────────────────────────────────────────────
+-- 3.Material GRN Header
 CREATE TABLE `tbl_material_grn` (
     `idtbl_material_grn`                          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `grn_number`                                  VARCHAR(30)  NOT NULL,
@@ -98,7 +95,7 @@ CREATE TABLE `tbl_material_grn` (
 
 
 
--- ── Material GRN Detail Lines ────────────────────────────────────────────
+-- 4.Material GRN Detail
 CREATE TABLE `tbl_material_grn_detail` (
     `idtbl_material_grn_detail`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `qty`                                   DOUBLE       NOT NULL,
@@ -126,4 +123,49 @@ CREATE TABLE `tbl_material_grn_detail` (
         FOREIGN KEY (`tbl_material_info_idtbl_material_info`)
         REFERENCES `tbl_material_info` (`idtbl_material_info`)
 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+
+-- 5. material_grn_return Header 
+CREATE TABLE `tbl_material_grn_return` (
+    `idtbl_material_grn_return`             INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `return_number`                         VARCHAR(50)     NOT NULL,
+    `date`                                  DATE            NOT NULL,
+    `batchno`                               VARCHAR(100)    NULL,
+    `reason`                                TEXT            NOT NULL,
+    `total`                                 DECIMAL(15,2)   NOT NULL DEFAULT 0.00,
+    `nettotal`                              DECIMAL(15,2)   NOT NULL DEFAULT 0.00,
+    `status`                                TINYINT(1)      NOT NULL DEFAULT 1  COMMENT '1=active,0=deleted',
+    `confirm_status`                        TINYINT(1)      NOT NULL DEFAULT 0  COMMENT '0=pending,1=confirmed',
+    `insertdatetime`                        DATETIME        NULL,
+    `updatedatetime`                        DATETIME        NULL,
+    -- FK columns (snake_case mirrors your existing style)
+    `tbl_user_idtbl_user`                   INT UNSIGNED    NOT NULL,
+    `tbl_material_grn_idtbl_material_grn`   INT UNSIGNED    NOT NULL,
+    `tbl_location_idtbl_location`           INT UNSIGNED    NOT NULL,
+    PRIMARY KEY (`idtbl_material_grn_return`),
+    KEY `fk_mgrn_ret_grn`      (`tbl_material_grn_idtbl_material_grn`),
+    KEY `fk_mgrn_ret_user`     (`tbl_user_idtbl_user`),
+    KEY `fk_mgrn_ret_location` (`tbl_location_idtbl_location`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 6. material_grn_return_detail 
+CREATE TABLE `tbl_material_grn_return_detail` (
+    `idtbl_material_grn_return_detail`               INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    `qty`                                            DECIMAL(15,4) NOT NULL DEFAULT 0.0000,
+    `unitprice`                                      DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    `total`                                          DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    `status`                                         TINYINT(1)    NOT NULL DEFAULT 1,
+    `insertdatetime`                                 DATETIME      NULL,
+    `updatedatetime`                                 DATETIME      NULL,
+    `tbl_user_idtbl_user`                            INT UNSIGNED  NOT NULL,
+    `tbl_material_grn_return_idtbl_material_grn_return` INT UNSIGNED NOT NULL,
+    `tbl_material_info_idtbl_material_info`          INT UNSIGNED  NOT NULL,
+    PRIMARY KEY (`idtbl_material_grn_return_detail`),
+    KEY `fk_mgrn_ret_det_return`   (`tbl_material_grn_return_idtbl_material_grn_return`),
+    KEY `fk_mgrn_ret_det_material` (`tbl_material_info_idtbl_material_info`),
+    KEY `fk_mgrn_ret_det_user`     (`tbl_user_idtbl_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -122,13 +122,13 @@
 
 				@php
 					$canSupplierPurchsingOrder = canAccessMenu(11);
-					$canGRN = canAccessMenu(11);
-					$canGRNReturn = canAccessMenu(11);
+					$canGRN = canAccessMenu(12);
+					$canGRNReturn = canAccessMenu(12);
 					$showGRNMenu = $canSupplierPurchsingOrder || $canGRN || $canGRNReturn;
 				@endphp
 				@if ($showGRNMenu)
 					<div data-kt-menu-trigger="click"
-						class="menu-item menu-accordion{{ (request()->is('materialgrn*') || request()->is('supplierpurchaseorders*') || request()->routeIs('supplierpurchaseorders.*')) ? ' show' : '' }}">
+						class="menu-item menu-accordion{{ (request()->is('materialgrn') || request()->is('materialgrn/*') || request()->is('supplierpurchaseorders*') || request()->is('materialgrnreturn*')) ? ' show' : '' }}">
 						<span class="menu-link">
 							<span class="menu-icon"><i class="ki-duotone ki-archive fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i></span>
 							<span class="menu-title">Material GRN</span>
@@ -140,12 +140,12 @@
 									href="{{ route('supplierpurchaseorders.index') }}"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Supplier Purchsing Order</span></a></div>
 							@endif
 							@if ($canGRN)
-								<div class="menu-item"><a class="menu-link{{ request()->is('materialgrn*') ? ' active' : '' }}"
+								<div class="menu-item"><a class="menu-link{{ (request()->is('materialgrn') || request()->is('materialgrn/*')) && !request()->is('materialgrnreturn*') ? ' active' : '' }}"
 									href="{{ route('materialgrn.index') }}"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Material GRN</span></a></div>
 							@endif
 							@if ($canGRNReturn)
-								<div class="menu-item"><a class="menu-link{{ request()->is('materialgrn*') ? ' active' : '' }}"
-									href="{{ route('materialgrn.index') }}"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Material GRN Return</span></a></div>
+								<div class="menu-item"><a class="menu-link{{ request()->is('materialgrnreturn*') ? ' active' : '' }}"
+									href="{{ route('materialgrnreturn.index') }}"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Material GRN Return</span></a></div>
 							@endif
 						</div>
 					</div>

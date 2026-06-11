@@ -127,6 +127,9 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware(['web', 'auth'])
                 ->group(base_path('routes/materialgrn.php'))
             ;
+            Route::middleware(['web', 'auth'])
+                ->group(base_path('routes/materialgrnreturn.php'))
+            ;
         });
     }
 }

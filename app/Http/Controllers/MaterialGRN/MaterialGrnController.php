@@ -41,7 +41,9 @@ class MaterialGrnController extends Controller
             'supplierPOrder',
             'supplierPOrder.suppliers:idtbl_supplier,suppliername',
             'location:idtbl_locations,locationname',
-        ])->get();
+        ])
+            ->where('status', 1)
+            ->get();
 
         return datatables()->of($data)
             ->addIndexColumn()
@@ -191,8 +193,9 @@ class MaterialGrnController extends Controller
                 $grn->tbl_supplier_porder_idtbl_supplier_porder)
                 ->update(['grnissuestatus' => 0]);
 
-            $grn->details()->delete();
-            $grn->delete();
+            // Soft delete: mark status = 0 instead of removing rows
+            $grn->details()->update(['status' => 0, 'updatedatetime' => now()]);
+            $grn->update(['status' => 0, 'updatedatetime' => now()]);
         });
 
         return response()->json(['message' => 'Material GRN deleted']);
