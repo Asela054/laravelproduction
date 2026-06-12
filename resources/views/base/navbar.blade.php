@@ -59,8 +59,9 @@
 				$canMaterialCategory = canAccessMenu(8);
 				$canMaterialDetail = canAccessMenu(9);
 				$canUnit = canAccessMenu(10);
+				$canmaterialstock = canAccessMenu(14);
 
-				$showMaterialMenu = $canMaterialCategory || $canMaterialDetail || $canUnit;
+				$showMaterialMenu = $canMaterialCategory || $canMaterialDetail || $canUnit || $canmaterialstock;
 				@endphp
 
 				@if ($showMaterialMenu)
@@ -107,6 +108,16 @@
 								</div>
 							@endif
 
+							@if ($canmaterialstock)
+								<div class="menu-item">
+									<a class="menu-link{{ request()->is('materialstock*') ? ' active' : '' }}"
+										href="{{ route('materialstock.index') }}">
+										<span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+										<span class="menu-title">Material Stock</span>
+									</a>
+								</div>
+							@endif
+
 						</div>
 					</div>
 				@endif
@@ -123,8 +134,8 @@
 				@php
 					$canSupplierPurchsingOrder = canAccessMenu(11);
 					$canGRN = canAccessMenu(12);
-					$canGRNReturn = canAccessMenu(12);
-					$showGRNMenu = $canSupplierPurchsingOrder || $canGRN || $canGRNReturn;
+					$canGRNReturn = canAccessMenu(13);
+					$showGRNMenu = $canSupplierPurchsingOrder || $canGRN || $canGRNReturn ;
 				@endphp
 				@if ($showGRNMenu)
 					<div data-kt-menu-trigger="click"
