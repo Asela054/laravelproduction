@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ProductionOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'tbl_production_order';
     protected $primaryKey = 'idtbl_production_order';
@@ -46,5 +48,27 @@ class ProductionOrder extends Model
     public function materialIssues()
     {
         return $this->hasMany(ProductionMaterialIssue::class, 'tbl_production_order_idtbl_production_order', 'idtbl_production_order');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('production_order')
+            ->logOnly([
+                'prodate',
+                'procode',
+                'prostartdate',
+                'proenddate',
+                'status',
+                'updateuser',
+                'updatedatetime',
+                'tbl_user_idtbl_user',
+                'tbl_customer_porder_idtbl_customer_porder',
+                'tbl_company_idtbl_company',
+                'tbl_company_branch_idtbl_company_branch',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn($event) => "Production Order {$event}");
     }
 }
