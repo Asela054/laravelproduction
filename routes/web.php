@@ -66,3 +66,5 @@ Route::get('/activitylog/{id}', [ActivitylogController::class, 'show'])->name('a
 require __DIR__ . '/auth.php';
 require __DIR__ . '/materials.php';
 require __DIR__.'/finishgoodbom.php';
+require __DIR__ . '/productionpacking.php';
+require __DIR__ . '/productionpackingquality.php';

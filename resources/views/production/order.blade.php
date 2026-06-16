@@ -163,7 +163,15 @@
                                             <input type="text" name="balanceqty" id="issue_balanceqty" class="form-control form-control-sm">
                                         </div>
                                         <div class="text-end mt-3">
-                                            <button type="button" class="btn btn-primary btn-sm" id="btnissuematerial">Check Production</button>
+                                            <button type="button" class="btn btn-primary btn-sm" id="btnissuematerial">
+                                                <span id="btnissuematerial-text">
+                                                    <i class="fa-solid fa-magnifying-glass me-2"></i>Check Production
+                                                </span>
+                                                <span id="btnissuematerial-spinner" class="d-none">
+                                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                    Checking...
+                                                </span>
+                                            </button>
                                             <input type="submit" id="hideisuematerialsubmit" class="d-none">
                                         </div>
                                     </form>
@@ -434,39 +442,68 @@
             const orderqty        = $('#issue_balanceqty').val();
             const productionid    = $('#hideprodcutionorder').val();
 
+            // Show spinner
             $('#btnissuematerial').prop('disabled', true);
+            $('#btnissuematerial-text').addClass('d-none');
+            $('#btnissuematerial-spinner').removeClass('d-none');
 
             $.post(productionInfoUrl, {
-                productionid: productionid,
+                productionid:    productionid,
                 orderfinishgood: orderfinishgood,
-                productbomlist: productbomlist,
-                orderqty: orderqty,
-                _token: '{{ csrf_token() }}'
+                productbomlist:  productbomlist,
+                orderqty:        orderqty,
+                _token:          '{{ csrf_token() }}'
             }, function (res) {
+                // Reset spinner
+                $('#btnissuematerial').prop('disabled', false);
+                $('#btnissuematerial-text').removeClass('d-none');
+                $('#btnissuematerial-spinner').addClass('d-none');
+
                 $('#tablebody').html(res.htmlview);
+
                 if (res.stockstatus == 1) {
                     $('#btnstartproduction').prop('disabled', true);
                     $('#alertdiv').html('<div class="alert alert-danger">Some material quantity is not enough. Please check stock and try again.</div>');
-                    $('#btnissuematerial').prop('disabled', false);
                 } else {
                     $('#btnstartproduction').prop('disabled', false);
-                    $('#btnissuematerial').prop('disabled', false);
+                    $('#alertdiv').html('');
                 }
+            }).fail(function () {
+                // Reset spinner on failure
+                $('#btnissuematerial').prop('disabled', false);
+                $('#btnissuematerial-text').removeClass('d-none');
+                $('#btnissuematerial-spinner').addClass('d-none');
+
+                Swal.fire('Error', 'Request failed. Please try again.', 'error');
             });
         });
 
         $('#tablebomqtyinfo tbody').on('click', 'tr', function () {
-            const row       = $(this);
+            const row        = $(this);
             const materialID = row.find('td:eq(1)').text();
-            rowID = row[0].rowIndex;
+            rowID            = row[0].rowIndex;
+
+            const batchCell  = row.find('td:last');
+            const originalContent = batchCell.html();
+            batchCell.html(`
+                <span class="d-flex align-items-center gap-2 text-muted">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    <span class="fs-8">Loading...</span>
+                </span>
+            `);
 
             $.post(batchListUrl, { materialID: materialID, _token: '{{ csrf_token() }}' }, function (res) {
+                batchCell.html(originalContent);
+
                 let html = '';
                 $.each(res, function (i, item) {
                     html += `<option value="${item.batchno}">${item.batchno} - ${item.qty}${item.unitcode}</option>`;
                 });
                 $('#batchnolist').empty().append(html).trigger('change');
                 $('#modalbatchno').modal('show');
+            }).fail(function () {
+                batchCell.html(originalContent);
+                Swal.fire('Error', 'Failed to load batch list. Please try again.', 'error');
             });
         });
 

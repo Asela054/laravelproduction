@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ProductionMaterialIssue extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'tbl_production_material_issue';
     protected $primaryKey = 'idtbl_production_material_issue';
@@ -39,5 +41,25 @@ class ProductionMaterialIssue extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'tbl_product_idtbl_product', 'idtbl_product');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('production_material_issue')
+            ->logOnly([
+                'qty',
+                'batchno',
+                'status',
+                'updateuser',
+                'updatedatetime',
+                'tbl_user_idtbl_user',
+                'tbl_production_order_idtbl_production_order',
+                'tbl_product_idtbl_product',
+                'tbl_material_info_idtbl_material_info',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn($event) => "Production Material Issue {$event}");
     }
 }
