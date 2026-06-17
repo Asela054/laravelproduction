@@ -208,7 +208,13 @@
 				columns: [
 
 					{ data: 'user.name', name: 'user.name' },
-					{ data: 'menu.menu', name: 'menu.menu' },
+					{
+						data: 'menu',
+						name: 'menu.menu',
+						render: function (data) {
+							return data?.menu ?? '-';
+						}
+					},
 
 					{
 						data: 'access_status',

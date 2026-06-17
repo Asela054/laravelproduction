@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'tbl_product';
     protected $primaryKey = 'idtbl_product';
@@ -44,4 +46,44 @@ class Product extends Model
         'tbl_sizes_idtbl_sizes',
         'tbl_size_categories_idtbl_size_categories',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('product')
+            ->logOnly([
+                'product_code',
+                'barcode',
+                'product_name',
+                'common_name',
+                'size',
+                'unitprice',
+                'saleprice',
+                'dollarrate',
+                'rol',
+                'pices_per_box',
+                'retail',
+                'salediscount',
+                'retaildiscount',
+                'price_acceptable',
+                'additional_discount',
+                'starpoints',
+                'uom',
+                'productimagepath',
+                'buying_qty',
+                'free_qty',
+                'status',
+                'updatedatetime',
+                'tbl_user_idtbl_user',
+                'tbl_product_category_idtbl_product_category',
+                'tbl_group_category_idtbl_group_category',
+                'tbl_sub_product_category_idtbl_sub_product_category',
+                'tbl_supplier_idtbl_supplier',
+                'tbl_sizes_idtbl_sizes',
+                'tbl_size_categories_idtbl_size_categories',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn($event) => "Product {$event}");
+    }
 }
