@@ -2,7 +2,7 @@
 @section('content')
 <div class="d-flex flex-column flex-column-fluid">
 
-    {{-- ── Toolbar ── --}}
+    {{-- Toolbar --}}
     <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
         <div id="kt_app_toolbar_container" class="app-container d-flex flex-stack">
             <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -21,7 +21,7 @@
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-fluid">
 
-            {{-- ── Main card / table ── --}}
+            {{-- Main card / table --}}
             <div class="card">
                 <div class="card-header border-0 pt-6 pb-6">
                     <div class="card-title">
@@ -69,9 +69,8 @@
 
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Create GRN Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Create GRN Modal --}}
+       
         <div class="modal fade" id="mgrn_modal_add" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered mw-1000px">
                 <div class="modal-content">
@@ -205,9 +204,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             View Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- View Modal --}}
         <div class="modal fade" id="mgrn_modal_view" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered mw-1000px">
                 <div class="modal-content">
@@ -301,9 +298,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-     Print Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Print Modal --}}
         <div class="modal fade" id="mgrn_modal_print" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -334,7 +329,7 @@
 <script>
 $(document).ready(function () {
 
-    /* ── Helpers ─────────────────────────────────────────────────────── */
+    /* Helpers */
     const parseNum = v => { const n = parseFloat(String(v ?? '').replace(/,/g,'')); return isNaN(n) ? 0 : n; };
     const fmtNum  = (v, d=2) => parseNum(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
     const fmtCur  = v => `Rs. ${fmtNum(v)}`;
@@ -344,7 +339,7 @@ $(document).ready(function () {
         $('#mgrn_divtotal,#mgrn_divvat,#mgrn_divnettotal').text(fmtCur(0));
     };
 
-    /* ── Qty-status badge ────────────────────────────────────────────── */
+    /* Qty-status badge */
     const qtyBadge = (received, ordered) => {
         if (ordered <= 0) return '<span class="badge badge-light-secondary">—</span>';
         if (received < ordered)  return `<span class="badge badge-light-danger">Short (${fmtNum(ordered-received,0)} less)</span>`;
@@ -352,7 +347,7 @@ $(document).ready(function () {
         return '<span class="badge badge-light-success">Exact</span>';
     };
 
-    /* ── Recalc row total ────────────────────────────────────────────── */
+    /* Recalc row total*/
     const recalcRow = $row => {
         const price = parseNum($row.find('.mgrn-unitprice').val());
         const qty   = parseNum($row.find('.mgrn-recv-qty').val());
@@ -361,7 +356,7 @@ $(document).ready(function () {
         $row.find('.mgrn-total-display').text(fmtCur(t));
     };
 
-    /* ── Recalc totals ───────────────────────────────────────────────── */
+    /* Recalc totals */
     const recalcTotals = () => {
         let total = 0;
         $('#mgrn_tableBody tr[data-material-id]').each(function () {
@@ -379,14 +374,14 @@ $(document).ready(function () {
         $('#mgrn_divnettotal').text(fmtCur(net));
     };
 
-    /* ── Update qty-status badge live ───────────────────────────────── */
+    /* Update qty-status badge live */
     const updateQtyBadge = $row => {
         const received = parseNum($row.find('.mgrn-recv-qty').val());
         const ordered  = parseNum($row.data('ordered-qty'));
         $row.find('.mgrn-qty-status').html(qtyBadge(received, ordered));
     };
 
-    /* ── Build a single material row ────────────────────────────────── */
+    /* Build a single material row */
     const buildRow = detail => {
         const orderedQty = parseNum(detail.ordered_qty);
         const initRecv   = parseNum(detail.ordered_qty);  // default received = ordered
@@ -418,7 +413,7 @@ $(document).ready(function () {
         </tr>`;
     };
 
-    /* ── Render SPO rows ─────────────────────────────────────────────── */
+    /* Render SPO rows */
     const renderRows = details => {
         if (!details || !details.length) {
             $('#mgrn_tableBody').html(
@@ -431,7 +426,7 @@ $(document).ready(function () {
         recalcTotals();
     };
 
-    /* ── Row events ──────────────────────────────────────────────────── */
+    /* Row events  */
     $(document).on('input', '.mgrn-recv-qty', function () {
         const $row = $(this).closest('tr');
         recalcRow($row);
@@ -439,7 +434,7 @@ $(document).ready(function () {
         recalcTotals();
     });
 
-    /* ── Load SPO list ───────────────────────────────────────────────── */
+    /* Load SPO list  */
     const loadSPOs = () => {
         const $sel = $('#mgrn_spo');
         $sel.prop('disabled', true).html('<option value="">Loading…</option>');
@@ -460,7 +455,7 @@ $(document).ready(function () {
         });
     };
 
-    /* ── SPO change → load materials ────────────────────────────────── */
+    /* SPO */
     $('#mgrn_spo').on('change', function () {
         const id = $(this).val();
         if (!id) {
@@ -492,13 +487,13 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Init Select2 for Location ───────────────────────────────────── */
+    /* Init Select2 for Location */
     $('#mgrn_location').select2({ dropdownParent: $('#mgrn_modal_add'), placeholder: 'Select Location…', allowClear: true });
 
-    /* ── Load SPOs on ready ──────────────────────────────────────────── */
+    /* Load SPOs on ready */
     loadSPOs();
 
-    /* ── Collect payload ─────────────────────────────────────────────── */
+    /* Collect payload */
     const buildPayload = () => {
         const date     = $('#mgrn_date').val();
         const spoId    = $('#mgrn_spo').val();
@@ -540,7 +535,7 @@ $(document).ready(function () {
         };
     };
 
-    /* ── Submit ──────────────────────────────────────────────────────── */
+    /* Submit */
     $('#mgrn_btnsubmit').on('click', function () {
         const payload = buildPayload();
         if (!payload) return;
@@ -578,7 +573,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Reset modal on close ────────────────────────────────────────── */
+    /* Reset modal on close*/
     $('#mgrn_modal_add').on('hidden.bs.modal', function () {
         $('#mgrnForm')[0].reset();
         $('#mgrn_spo').val(null).trigger('change');
@@ -589,7 +584,7 @@ $(document).ready(function () {
         resetTotals();
     });
 
-    /* ── View GRN ────────────────────────────────────────────────────── */
+    /* View GRN */
     $(document).on('click', '.mgrn-btn-view', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -637,7 +632,7 @@ $(document).ready(function () {
         return '<span class="badge badge-light-secondary">—</span>';
     };
 
-    /* ── Confirm GRN ─────────────────────────────────────────────────── */
+    /*Confirm GRN*/
     $(document).on('click', '.mgrn-btn-confirm', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -663,7 +658,7 @@ $(document).ready(function () {
     });
 
 
-    /* ── Delete GRN ──────────────────────────────────────────────────── */
+    /*Delete GRN*/
     $(document).on('click', '.mgrn-btn-delete', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -692,7 +687,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Print GRN ───────────────────────────────────────────────────── */
+    /* Print GRN */
     $(document).on('click', '.mgrn-btn-pdf, .mgrn-btn-print', function (e) {
         e.preventDefault();
         const src = "{{ route('materialgrn.pdf', ['id' => ':id']) }}".replace(':id', $(this).data('id'));
@@ -709,7 +704,7 @@ $(document).ready(function () {
         $('#mgrn_print_frame').attr('src', 'about:blank');
     });
 
-    /* ── DataTable ───────────────────────────────────────────────────── */
+    /*DataTable */
     var mgrnTable = $('#mgrnTable').DataTable({
         processing: true,
         serverSide: true,

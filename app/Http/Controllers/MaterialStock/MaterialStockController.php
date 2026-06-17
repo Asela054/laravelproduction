@@ -17,7 +17,7 @@ class MaterialStockController extends Controller
     //     $this->middleware('privilege:14,edit')->only(['toggleStatus']);
     // }
 
-    // ── Index ────────────────────────────────────────────────────────────
+    // Index
     public function index()
     {
         $locations = Location::select(['idtbl_locations', 'locationname'])
@@ -27,7 +27,7 @@ class MaterialStockController extends Controller
         return view('materialstock.index', compact('locations'));
     }
 
-    // ── DataTable feed – aggregated stock per material + location ────────
+    // get data 
     public function getData(Request $request)
     {
         $locationId = $request->input('location_id');
@@ -60,7 +60,7 @@ class MaterialStockController extends Controller
             ->make(true);
     }
 
-    // ── Batch-wise detail for a material at a location ───────────────────
+    // Batch-wise detail for a material at a location 
     public function batchDetails(Request $request)
     {
         $materialId = $request->input('material_id');
@@ -88,7 +88,7 @@ class MaterialStockController extends Controller
             ->make(true);
     }
 
-    // ── Toggle active / inactive for a single stock batch ───────────────
+    //  Toggle active / inactive for a single stock batch 
     public function toggleStatus($id)
     {
         $stock = MaterialStock::findOrFail($id);

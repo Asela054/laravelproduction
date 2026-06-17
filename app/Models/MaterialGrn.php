@@ -33,7 +33,6 @@ class MaterialGrn extends Model
         'tbl_location_idtbl_location',
     ];
 
-    // ── Auto-generate GRN number on creating ────────────────────────────
     protected static function booted(): void
     {
         static::creating(function (self $model) {

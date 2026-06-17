@@ -27,7 +27,6 @@ class MaterialGrnReturnDetail extends Model
         'tbl_material_info_idtbl_material_info',
     ];
 
-    // ── Relationships ────────────────────────────────────────────────
     public function materialGrnReturn()
     {
         return $this->belongsTo(MaterialGrnReturn::class,

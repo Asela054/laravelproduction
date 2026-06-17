@@ -33,7 +33,6 @@ class SupplierPOrder extends Model
         'grnissuestatus',
     ];
 
-    // ── Auto-generate order number on creating ──────────────────────────
     protected static function booted(): void
     {
         static::creating(function (self $model) {
@@ -47,7 +46,6 @@ class SupplierPOrder extends Model
     {
         $prefix  = 'SPO-' . now()->format('Ym') . '-';   // e.g. SPO-202606-
 
-        // Lock the row so concurrent requests don't generate duplicates
         $last = DB::table('tbl_supplier_porder')
             ->where('order_number', 'like', $prefix . '%')
             ->orderByDesc('order_number')
@@ -60,7 +58,7 @@ class SupplierPOrder extends Model
 
         return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
     }
-    // ────────────────────────────────────────────────────────────────────
+
 
     public function users()
     {

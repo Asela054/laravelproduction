@@ -19,7 +19,7 @@
 </head>
 <body>
 
-    {{-- ── Company header ── --}}
+    {{-- Company header--}}
     <table class="tbl-none" style="width:100%; margin-bottom:8px;">
         <tr>
             <td style="width:60%;">
@@ -60,7 +60,7 @@
 
     <h4 style="text-align:center; margin:8px 0;">MATERIAL GRN RETURN NOTE</h4>
 
-    {{-- ── Info strip ── --}}
+    {{-- Info strip --}}
     <table class="tbl-none" style="margin-bottom:8px;">
         <tr>
             <td class="sm">
@@ -77,7 +77,7 @@
         </tr>
     </table>
 
-    {{-- ── Items ── --}}
+    {{-- Items --}}
     <table style="margin-top:8px;">
         <thead>
             <tr>
@@ -117,7 +117,7 @@
         </tfoot>
     </table>
 
-    {{-- ── Signatures ── --}}
+    {{-- Signatures --}}
     <table class="tbl-none" style="width:100%; margin-top:20px;">
         <tr>
             <td class="sm" style="width:40%; vertical-align:top;">

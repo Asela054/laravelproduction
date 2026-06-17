@@ -31,7 +31,6 @@ class MaterialGrnReturn extends Model
         'tbl_location_idtbl_location',
     ];
 
-    // ── Auto-generate return number on creating ──────────────────────
     protected static function booted(): void
     {
         static::creating(function (self $model) {
@@ -57,7 +56,6 @@ class MaterialGrnReturn extends Model
         return 'MGRNR-' . $next;
     }
 
-    // ── Relationships ────────────────────────────────────────────────
     public function user()
     {
         return $this->belongsTo(User::class, 'tbl_user_idtbl_user', 'idtbl_user');

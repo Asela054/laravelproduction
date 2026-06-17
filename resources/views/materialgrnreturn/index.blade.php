@@ -2,7 +2,7 @@
 @section('content')
 <div class="d-flex flex-column flex-column-fluid">
 
-    {{-- ── Toolbar ── --}}
+    {{-- Toolbar --}}
     <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
         <div id="kt_app_toolbar_container" class="app-container d-flex flex-stack">
             <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -21,7 +21,7 @@
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-fluid">
 
-            {{-- ── Main card / table ── --}}
+            {{-- Main card / table --}}
             <div class="card">
                 <div class="card-header border-0 pt-6 pb-6">
                     <div class="card-title">
@@ -66,9 +66,7 @@
 
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Create GRN Return Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Create GRN Return Modal--}}
         <div class="modal fade" id="mgrnr_modal_add" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered mw-1000px">
                 <div class="modal-content">
@@ -181,9 +179,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             View Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{--  View Modal --}}
         <div class="modal fade" id="mgrnr_modal_view" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered mw-1000px">
                 <div class="modal-content">
@@ -264,9 +260,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Print Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Print Modal --}}
         <div class="modal fade" id="mgrnr_modal_print" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -297,7 +291,7 @@
 <script>
 $(document).ready(function () {
 
-    /* ── Helpers ─────────────────────────────────────────────────────── */
+    /* Helpers */
     const parseNum = v => { const n = parseFloat(String(v ?? '').replace(/,/g,'')); return isNaN(n) ? 0 : n; };
     const fmtNum  = (v, d=2) => parseNum(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
     const fmtCur  = v => `Rs. ${fmtNum(v)}`;
@@ -307,7 +301,7 @@ $(document).ready(function () {
         $('#mgrnr_divtotal,#mgrnr_divnettotal').text(fmtCur(0));
     };
 
-    /* ── Recalc row total ────────────────────────────────────────────── */
+    /* Recalc row total  */
     const recalcRow = $row => {
         const price = parseNum($row.find('.mgrnr-unitprice').val());
         const qty   = parseNum($row.find('.mgrnr-ret-qty').val());
@@ -316,7 +310,7 @@ $(document).ready(function () {
         $row.find('.mgrnr-total-display').text(fmtCur(t));
     };
 
-    /* ── Recalc totals ───────────────────────────────────────────────── */
+    /* Recalc totals */
     const recalcTotals = () => {
         let total = 0;
         $('#mgrnr_tableBody tr[data-material-id]').each(function () {
@@ -328,7 +322,7 @@ $(document).ready(function () {
         $('#mgrnr_divnettotal').text(fmtCur(total));
     };
 
-    /* ── Build a single material row ────────────────────────────────── */
+    /* Build a single material row*/
     const buildRow = detail => {
         const grnQty       = parseNum(detail.grn_qty);
         const remainingQty = parseNum(detail.remaining_qty);
@@ -359,7 +353,7 @@ $(document).ready(function () {
         </tr>`;
     };
 
-    /* ── Render GRN rows ─────────────────────────────────────────────── */
+    /* Render GRN rows */
     const renderRows = details => {
         if (!details || !details.length) {
             $('#mgrnr_tableBody').html(
@@ -372,7 +366,7 @@ $(document).ready(function () {
         recalcTotals();
     };
 
-    /* ── Row events ──────────────────────────────────────────────────── */
+    /* Row events */
     $(document).on('input', '.mgrnr-ret-qty', function () {
         const $row   = $(this).closest('tr');
         const max    = parseNum($(this).attr('max'));
@@ -382,7 +376,7 @@ $(document).ready(function () {
         recalcTotals();
     });
 
-    /* ── Load GRN list ───────────────────────────────────────────────── */
+    /* Load GRN list */
     const loadGRNs = () => {
         const $sel = $('#mgrnr_grn');
         $sel.prop('disabled', true).html('<option value="">Loading…</option>');
@@ -409,7 +403,7 @@ $(document).ready(function () {
         });
     };
 
-    /* ── GRN change → load materials + auto-fill location & batch ────── */
+    /* GRN  */
     $('#mgrnr_grn').on('change', function () {
         const id = $(this).val();
         if (!id) {
@@ -441,10 +435,10 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Load GRNs on ready ──────────────────────────────────────────── */
+    /* Load GRNs on ready */
     loadGRNs();
 
-    /* ── Load next return number when modal opens ────────────────────── */
+    /*Load next return number when modal opens*/
     $('#mgrnr_modal_add').on('show.bs.modal', function () {
         $('#mgrnr_number').val('Generating…');
         $.get("{{ route('materialgrnreturn.next-return-number') }}", function (resp) {
@@ -452,7 +446,6 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Collect payload ─────────────────────────────────────────────── */
     const buildPayload = () => {
         const date   = $('#mgrnr_date').val();
         const grnId  = $('#mgrnr_grn').val();
@@ -490,7 +483,7 @@ $(document).ready(function () {
         };
     };
 
-    /* ── Submit ──────────────────────────────────────────────────────── */
+    /* Submit */
     $('#mgrnr_btnsubmit').on('click', function () {
         const payload = buildPayload();
         if (!payload) return;
@@ -520,7 +513,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Reset modal on close ────────────────────────────────────────── */
+    /* Reset modal on close */
     $('#mgrnr_modal_add').on('hidden.bs.modal', function () {
         $('#mgrnrForm')[0].reset();
         $('#mgrnr_grn').val(null).trigger('change');
@@ -531,7 +524,7 @@ $(document).ready(function () {
         resetTotals();
     });
 
-    /* ── View GRN Return ─────────────────────────────────────────────── */
+    /* View GRN Return */
     $(document).on('click', '.mgrnr-btn-view', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -567,7 +560,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Confirm Return ──────────────────────────────────────────────── */
+    /* Confirm Return */
     $(document).on('click', '.mgrnr-btn-confirm', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -595,7 +588,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Delete Return ───────────────────────────────────────────────── */
+    /* Delete Return  */
     $(document).on('click', '.mgrnr-btn-delete', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -624,7 +617,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Print / PDF ─────────────────────────────────────────────────── */
+    /* Print / PDF */
     $(document).on('click', '.mgrnr-btn-pdf, .mgrnr-btn-print', function (e) {
         e.preventDefault();
         const src = "{{ route('materialgrnreturn.pdf', ['id' => ':id']) }}".replace(':id', $(this).data('id'));
@@ -641,7 +634,7 @@ $(document).ready(function () {
         $('#mgrnr_print_frame').attr('src', 'about:blank');
     });
 
-    /* ── DataTable ───────────────────────────────────────────────────── */
+    /* DataTable*/
     var mgrnrTable = $('#mgrnrTable').DataTable({
         processing: true,
         serverSide: true,

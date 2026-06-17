@@ -22,13 +22,13 @@ class MaterialGrnReturnController extends Controller
     //     $this->middleware('privilege:12,delete')->only(['destroy']);
     // }
 
-    // ── Index ────────────────────────────────────────────────────────
+    // Index 
     public function index()
     {
         return view('materialgrnreturn.index');
     }
 
-    // ── DataTable feed ───────────────────────────────────────────────
+    // get data
     public function getData()
     {
         $data = MaterialGrnReturn::with([
@@ -45,7 +45,6 @@ class MaterialGrnReturnController extends Controller
             ->make(true);
     }
 
-    // ── List confirmed GRNs for dropdown ────────────────────────────
     public function listGrns()
     {
         $grns = MaterialGrn::with('supplierPOrder:idtbl_supplier_porder,order_number')
@@ -65,7 +64,6 @@ class MaterialGrnReturnController extends Controller
         return response()->json($payload);
     }
 
-    // ── GRN details for return form ──────────────────────────────────
     public function grnDetails($id)
     {
         $grn = MaterialGrn::with([
@@ -113,7 +111,7 @@ class MaterialGrnReturnController extends Controller
         ]);
     }
 
-    // ── Next return number ───────────────────────────────────────────
+    // GRN return number
     public function nextReturnNumber()
     {
         return response()->json([
@@ -121,7 +119,6 @@ class MaterialGrnReturnController extends Controller
         ]);
     }
 
-    // ── Store new GRN Return ─────────────────────────────────────────
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -233,7 +230,7 @@ class MaterialGrnReturnController extends Controller
     }
 
 
-    // ── Delete (pending only) ────────────────────────────────────────
+    // Delete
     public function destroy($id)
     {
         $return = MaterialGrnReturn::findOrFail($id);
@@ -257,7 +254,7 @@ class MaterialGrnReturnController extends Controller
         return response()->json(['message' => 'Material GRN Return deleted']);
     }
 
-        // ── Show detail (for view modal) ─────────────────────────────────
+    // Show detail (for view modal)
     public function show($id)
     {
         $return = MaterialGrnReturn::with([
@@ -271,7 +268,6 @@ class MaterialGrnReturnController extends Controller
             return response()->json(['message' => 'GRN Return not found'], 404);
         }
 
-        // Fetch original GRN quantities for comparison
         $grnDetails = collect();
         if ($return->materialGrn) {
             $grnDetails = $return->materialGrn
@@ -309,7 +305,6 @@ class MaterialGrnReturnController extends Controller
         ]);
     }
 
-    // ── Confirm → deduct from tbl_material_stock ─────────────────────
     public function confirm($id)
     {
         $userId = Auth::id();
@@ -369,7 +364,7 @@ class MaterialGrnReturnController extends Controller
                 }
             }
 
-            if (!empty($errors)) return; // will be caught below
+            if (!empty($errors)) return;
 
             $return->update([
                 'confirm_status'     => 1,
@@ -388,7 +383,7 @@ class MaterialGrnReturnController extends Controller
         return response()->json(['message' => 'Material GRN Return confirmed and stock deducted']);
     }
 
-    // ── PDF / Print view ─────────────────────────────────────────────
+    // Print view 
     public function pdf($id)
     {
         $return = MaterialGrnReturn::with([

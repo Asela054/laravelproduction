@@ -23,7 +23,7 @@ class MaterialGrnController extends Controller
     //     $this->middleware('privilege:12,delete')->only(['destroy']);
     // }
 
-    // ── Index ────────────────────────────────────────────────────────────
+    // Index 
     public function index()
     {
         $locations = Location::select(['idtbl_locations', 'locationname'])
@@ -33,7 +33,7 @@ class MaterialGrnController extends Controller
         return view('materialgrn.index', compact('locations'));
     }
 
-    // ── DataTable feed ───────────────────────────────────────────────────
+    // get data
     public function getData()
     {
         $data = MaterialGrn::with([
@@ -50,7 +50,7 @@ class MaterialGrnController extends Controller
             ->make(true);
     }
 
-    // ── List open SPOs for AJAX dropdown ────────────────────────────────
+    // List open SPOs for AJAX dropdown 
     public function listSupplierPOrders()
     {
         $orders = SupplierPOrder::with('suppliers:idtbl_supplier,suppliername')
@@ -71,7 +71,7 @@ class MaterialGrnController extends Controller
         return response()->json($payload);
     }
 
-    // ── SPO header + line details for GRN creation form ─────────────────
+    // SPO 
     public function supplierPOrderDetails($id)
     {
         $order = SupplierPOrder::with([
@@ -105,7 +105,6 @@ class MaterialGrnController extends Controller
         return response()->json(['grn_number' => MaterialGrn::generateGrnNumber()]);
     }
 
-    // ── Store new Material GRN ───────────────────────────────────────────
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -193,7 +192,7 @@ class MaterialGrnController extends Controller
                 $grn->tbl_supplier_porder_idtbl_supplier_porder)
                 ->update(['grnissuestatus' => 0]);
 
-            // Soft delete: mark status = 0 instead of removing rows
+            // delete: mark status = 0 
             $grn->details()->update(['status' => 0, 'updatedatetime' => now()]);
             $grn->update(['status' => 0, 'updatedatetime' => now()]);
         });
@@ -201,7 +200,7 @@ class MaterialGrnController extends Controller
         return response()->json(['message' => 'Material GRN deleted']);
     }
 
-    // ── Show GRN detail lines (for view modal) ───────────────────────────
+    // Show GRN detail (for view modal) 
     public function show($id)
     {
         $grn = MaterialGrn::with([
@@ -212,7 +211,6 @@ class MaterialGrnController extends Controller
             'user:idtbl_user,name',
         ])->findOrFail($id);
 
-        // Attach ordered_qty from SPO for comparison display
         $spoDetails = collect();
         if ($grn->supplierPOrder) {
             $spoDetails = $grn->supplierPOrder->details()
@@ -263,7 +261,7 @@ class MaterialGrnController extends Controller
         ]);
     }
 
-    // ── Confirm GRN → push to tbl_material_stock ────────────────────────
+    // Confirm GRN (push to tbl_material_stock)
     public function confirm($id)
     {
         $userId = Auth::id();
@@ -299,7 +297,7 @@ class MaterialGrnController extends Controller
         return response()->json(['message' => 'Material GRN confirmed and stock updated']);
     }
 
-    // ── PDF / Print view ─────────────────────────────────────────────────
+    // Print view
     public function pdf($id)
     {
         $grn = MaterialGrn::with([

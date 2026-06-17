@@ -15,7 +15,7 @@
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container">
 
-            {{-- ── Main Card ── --}}
+            {{--Main Card --}}
             <div class="card">
                 <div class="card-header border-0 pt-6 pb-6">
                     <div class="card-title">
@@ -59,9 +59,7 @@
 
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Create / Edit Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Create / Edit Modal --}}
         <div class="modal fade" id="kt_modal_spo_add" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered mw-900px">
                 <div class="modal-content">
@@ -159,9 +157,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             View Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- View Modal --}}
         <div class="modal fade" id="kt_modal_spo_view" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
@@ -225,9 +221,7 @@
             </div>
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Print Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{-- Print Modal --}}
         <div class="modal fade" id="kt_modal_spo_print" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -256,9 +250,7 @@
 <script>
 $(document).ready(function () {
 
-    /* ────────────────────────────────────────────────────────────────────
-       Helpers
-    ──────────────────────────────────────────────────────────────────── */
+    /* Helpers */
     const parseNum = (v) => {
         const n = parseFloat(String(v ?? '').replace(/,/g, ''));
         return isNaN(n) ? 0 : n;
@@ -296,14 +288,10 @@ $(document).ready(function () {
         $('#spo_divnettotal').text(fmtCur(netTotal));
     };
 
-    /* ────────────────────────────────────────────────────────────────────
-       Materials map  { id => { id, materialname, materialcode, unitprice } }
-    ──────────────────────────────────────────────────────────────────── */
+    /* Materials map  { id => { id, materialname, materialcode, unitprice } } */
     const materialsMap = {};
 
-    /* ────────────────────────────────────────────────────────────────────
-       Select2 initialisation
-    ──────────────────────────────────────────────────────────────────── */
+    /* Select2 initialisation*/
     const initSelect2 = () => {
         const $parent = $('#kt_modal_spo_add');
         $('#spo_supplier, #spo_material').each(function () {
@@ -313,9 +301,7 @@ $(document).ready(function () {
         });
     };
 
-    /* ────────────────────────────────────────────────────────────────────
-       Load suppliers
-    ──────────────────────────────────────────────────────────────────── */
+    /* Load suppliers */
     function loadSuppliers() {
         return $.ajax({
             url:  "{{ route('supplierpurchaseorders.getsuppliersdetails') }}",
@@ -335,9 +321,7 @@ $(document).ready(function () {
         });
     }
 
-    /* ────────────────────────────────────────────────────────────────────
-       Load materials  (unitperctn → used as unit price)
-    ──────────────────────────────────────────────────────────────────── */
+    /* Load materials  (unitperctn → used as unit price)*/
     function loadMaterials() {
         return $.ajax({
             url:  "{{ route('supplierpurchaseorders.getmaterialsdetails') }}",
@@ -364,9 +348,7 @@ $(document).ready(function () {
         });
     }
 
-    /* ────────────────────────────────────────────────────────────────────
-       Add material row to table
-    ──────────────────────────────────────────────────────────────────── */
+    /* Add material row to table*/
     function buildRow(mid, mname, mcode, unitprice, qty) {
         return `
         <tr class="align-middle" data-material-id="${mid}">
@@ -418,9 +400,7 @@ $(document).ready(function () {
         recalcRow($(`#spo_tableBody tr[data-material-id="${mid}"]`));
     }
 
-    /* ────────────────────────────────────────────────────────────────────
-       Material select → add row
-    ──────────────────────────────────────────────────────────────────── */
+    /* Material select → add row*/
     $('#spo_material').on('change', function () {
         const mid = $(this).val();
         if (!mid) return;
@@ -430,9 +410,7 @@ $(document).ready(function () {
         $(this).val('').trigger('change');
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Row events
-    ──────────────────────────────────────────────────────────────────── */
+    /* Row events */
     $(document).on('input', '.spo-unitprice, .spo-qty', function () {
         recalcRow($(this).closest('tr'));
         recalcTotals();
@@ -445,9 +423,7 @@ $(document).ready(function () {
         recalcTotals();
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Modal mode helpers
-    ──────────────────────────────────────────────────────────────────── */
+    /* Modal mode helpers */
     const setCreateMode = () => {
         $('#spo_mode').val('create');
         $('#spo_edit_id').val('');
@@ -479,16 +455,11 @@ $(document).ready(function () {
         if (data.supplierId) $('#spo_supplier').val(data.supplierId).trigger('change');
     };
 
-    /* ────────────────────────────────────────────────────────────────────
-       Load suppliers & materials ONCE at page ready.
-    ──────────────────────────────────────────────────────────────────── */
+    /* Load suppliers & materials ONCE at page ready.*/
     $.when(loadSuppliers(), loadMaterials()).done(function () {
         initSelect2();
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Modal lifecycle
-    ──────────────────────────────────────────────────────────────────── */
     $('[data-bs-target="#kt_modal_spo_add"]').on('click', setCreateMode);
 
     $('#kt_modal_spo_add').on('show.bs.modal', function () {
@@ -505,9 +476,7 @@ $(document).ready(function () {
         $('#spo_supplier, #spo_material').val(null).trigger('change');
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Collect order details from table rows
-    ──────────────────────────────────────────────────────────────────── */
+    /*Collect order details from table rows */
     const collectDetails = () => {
         const details = [];
         $('#spo_tableBody tr').each(function () {
@@ -524,9 +493,7 @@ $(document).ready(function () {
         return details;
     };
 
-    /* ────────────────────────────────────────────────────────────────────
-       Submit (create / update)
-    ──────────────────────────────────────────────────────────────────── */
+    /* Submit (create / update)*/
     $('#spo_btnsubmit').on('click', function () {
         const isEdit       = $('#spo_mode').val() === 'edit';
         const editId       = $('#spo_edit_id').val();
@@ -577,9 +544,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       View PO
-    ──────────────────────────────────────────────────────────────────── */
+    /* View PO */
     const renderView = (data) => {
          $('#spo_view_orderno').html(data.order_number 
             ? `<div class="badge badge-light-primary">${data.order_number}</div>` 
@@ -615,9 +580,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Edit PO
-    ──────────────────────────────────────────────────────────────────── */
+    /* Edit PO */
     $(document).on('click', '.spo-btn-edit', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -637,9 +600,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Print PO
-    ──────────────────────────────────────────────────────────────────── */
+    /* Print PO */
     $(document).on('click', '.spo-btn-print', function (e) {
         e.preventDefault();
         const src = "{{ route('supplierpurchaseorders.pdf', ['id' => ':id']) }}".replace(':id', $(this).data('id'));
@@ -651,9 +612,7 @@ $(document).ready(function () {
         if (f?.contentWindow) { f.contentWindow.focus(); f.contentWindow.print(); }
     });
 
-    /* ────────────────────────────────────────────────────────────────────
-       Status update (confirm / delete)
-    ──────────────────────────────────────────────────────────────────── */
+    /* Status update (confirm / delete)*/
     function updateStatus(id, status, text) {
         Swal.fire({ title: 'Are you sure?', text, icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes' })
         .then(r => {
@@ -671,9 +630,7 @@ $(document).ready(function () {
     $(document).on('click', '.spo-btn-confirm', (e) => { e.preventDefault(); updateStatus($(e.currentTarget).data('id'), 1, 'Confirm this supplier purchase order?'); });
     $(document).on('click', '.spo-btn-delete',  (e) => { e.preventDefault(); updateStatus($(e.currentTarget).data('id'), 3, 'Delete this supplier purchase order?'); });
 
-    /* ────────────────────────────────────────────────────────────────────
-       DataTable
-    ──────────────────────────────────────────────────────────────────── */
+    /* DataTable */
     var spoTable = $('#spoTable').DataTable({
         processing: true,
         serverSide: true,

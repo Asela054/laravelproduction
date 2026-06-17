@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Http\Controllers\SupplierPOrderController;
+use App\Http\Controllers\SupplierPOrder\SupplierPOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('supplierpurchaseorders')->name('supplierpurchaseorders.')->group(function () {

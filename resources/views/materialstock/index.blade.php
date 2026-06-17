@@ -2,7 +2,7 @@
 @section('content')
 <div class="d-flex flex-column flex-column-fluid">
 
-    {{-- ── Toolbar ── --}}
+    {{-- Toolbar --}}
     <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
         <div id="kt_app_toolbar_container" class="app-container d-flex flex-stack">
             <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -21,7 +21,7 @@
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-fluid">
 
-            {{-- ── Main card ── --}}
+            {{-- Main card --}}
             <div class="card">
                 <div class="card-header border-0 pt-6 pb-4">
                     <div class="card-title d-flex flex-wrap gap-3 align-items-center">
@@ -82,9 +82,7 @@
 
         </div>
 
-        {{-- ════════════════════════════════════════════════════════════════
-             Stock Details (Batch-wise) Modal
-        ════════════════════════════════════════════════════════════════ --}}
+        {{--  Stock Details (Batch-wise) Modal --}}
         <div class="modal fade" id="mstock_modal_detail" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -138,20 +136,20 @@
 <script>
 $(document).ready(function () {
 
-    /* ── Helpers ─────────────────────────────────────────────────────── */
+    /* Helpers  */
     const fmtNum = (v, d = 2) => {
         const n = parseFloat(String(v ?? '').replace(/,/g, ''));
         return isNaN(n) ? '0.00' : n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
     };
     const fmtCur = v => `Rs. ${fmtNum(v)}`;
 
-    /* ── Location Select2 ────────────────────────────────────────────── */
+    /* Location Select2  */
     $('#mstock_location_filter').select2({
         placeholder: 'All Locations',
         allowClear: true,
     });
 
-    /* ── Main DataTable ──────────────────────────────────────────────── */
+    /* Main DataTable */
     var mstockTable = $('#mstockTable').DataTable({
         processing: true,
         serverSide: true,
@@ -224,22 +222,22 @@ $(document).ready(function () {
         drawCallback: () => KTMenu.createInstances(),
     });
 
-    /* ── Search ──────────────────────────────────────────────────────── */
+    /* Search*/
     $('#mstock_search').on('keyup change', function () {
         mstockTable.search(this.value).draw();
     });
 
-    /* ── Filter ──────────────────────────────────────────────────────── */
+    /* Filter*/
     $('#mstock_btn_filter').on('click', () => mstockTable.ajax.reload());
 
-    /* ── Reset ───────────────────────────────────────────────────────── */
+    /* Reset */
     $('#mstock_btn_reset').on('click', function () {
         $('#mstock_search').val('');
         $('#mstock_location_filter').val(null).trigger('change');
         mstockTable.search('').ajax.reload();
     });
 
-    /* ── Detail DataTable (batch-wise) ───────────────────────────────── */
+    /* Detail DataTable (batch-wise) */
     var detailTable = null;
 
     $(document).on('click', '.mstock-btn-detail', function (e) {
@@ -356,7 +354,7 @@ $(document).ready(function () {
         $('#mstock_modal_detail').modal('show');
     });
 
-    /* ── Toggle batch status ─────────────────────────────────────────── */
+    /* Toggle batch status */
     $(document).on('click', '.mstock-btn-toggle', function (e) {
         e.preventDefault();
         const id       = $(this).data('id');
@@ -390,7 +388,7 @@ $(document).ready(function () {
         });
     });
 
-    /* ── Clean up on modal close ─────────────────────────────────────── */
+    /* Clean up on modal close  */
     $('#mstock_modal_detail').on('hidden.bs.modal', function () {
         if (detailTable) {
             detailTable.destroy();

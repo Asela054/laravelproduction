@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SupplierPOrder;
 
+use App\Http\Controllers\Controller; 
 use App\Models\SupplierPOrder;
 use App\Models\SupplierPOrderDetail;
 use App\Models\MaterialDetail;
@@ -44,10 +45,7 @@ class SupplierPOrderController extends Controller
             ->make(true);
     }
 
-    /**
-     * Load all active suppliers.
-     * tbl_supplier.status is int(11) — compare with 1.
-     */
+
     public function getSupplierDetails()
     {
         $suppliers = Supplier::where('status', 1)
@@ -56,10 +54,6 @@ class SupplierPOrderController extends Controller
         return response()->json($suppliers);
     }
 
-    /**
-     * Load all active materials.
-     * Returns idtbl_material_info, materialname, materialinfocode, unitperctn (used as unit price).
-     */
     public function getMaterialDetails()
     {
         $materials = MaterialDetail::where('status', 1)
@@ -109,7 +103,7 @@ class SupplierPOrderController extends Controller
 
             foreach ($payload['orderDetails'] as $detail) {
                 $qty        = $detail['newQty'];
-                $unitPrice  = $detail['unitPrice'];   // sourced from unitperctn
+                $unitPrice  = $detail['unitPrice'];   
                 $totalPrice = $unitPrice * $qty;
 
                 $spo->details()->create([
