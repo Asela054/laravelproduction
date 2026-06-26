@@ -142,7 +142,6 @@ CREATE TABLE `tbl_material_grn_return` (
     `confirm_status`                        TINYINT(1)      NOT NULL DEFAULT 0  COMMENT '0=pending,1=confirmed',
     `insertdatetime`                        DATETIME        NULL,
     `updatedatetime`                        DATETIME        NULL,
-    -- FK columns (snake_case mirrors your existing style)
     `tbl_user_idtbl_user`                   INT UNSIGNED    NOT NULL,
     `tbl_material_grn_idtbl_material_grn`   INT UNSIGNED    NOT NULL,
     `tbl_location_idtbl_location`           INT UNSIGNED    NOT NULL,
